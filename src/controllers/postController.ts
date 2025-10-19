@@ -1,0 +1,69 @@
+import { Request, Response } from 'express';
+import { PostsService } from '../services/postsService';
+
+export class PostController {
+  static async getAllPosts(_: Request, res: Response): Promise<void> {
+    try {
+      const result = await PostsService.getAllPosts();
+      res.status(result.success ? 200 : 404).json(result);
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        message: 'Internal server error',
+      });
+    }
+  }
+
+  static async createPost(req: Request, res: Response): Promise<void> {
+    try {
+      const postData = req.body;
+      const result = await PostsService.createPost(postData);
+      res.status(result.success ? 201 : 400).json(result);
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        message: 'Internal server error',
+      });
+    }
+  }
+
+  static async getSinglePost(req: Request, res: Response): Promise<void> {
+    try {
+      const postId = req.params.id;
+      const result = await PostsService.getSinglePost(postId);
+      res.status(result.success ? 200 : 404).json(result);
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        message: 'Internal server error',
+      });
+    }
+  }
+
+  static async updatePost(req: Request, res: Response): Promise<void> {
+    try {
+      const postId = req.params.id;
+      const postData = req.body;
+      const result = await PostsService.updatePost(postId, postData);
+      res.status(result.success ? 200 : 404).json(result);
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        message: 'Internal server error',
+      });
+    }
+  }
+
+  static async deletePost(req: Request, res: Response): Promise<void> {
+    try {
+      const postId = req.params.id;
+      const result = await PostsService.deletePost(postId);
+      res.status(result.success ? 200 : 404).json(result);
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        message: 'Internal server error',
+      });
+    }
+  }
+}
