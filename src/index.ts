@@ -3,10 +3,13 @@ import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import postRoutes from './routes/postRoute';
+import { LoggerUtils } from './utils/loggerUtils';
 
 dotenv.config();
 
 const app: Application = express();
+
+LoggerUtils.initialize();
 
 const allowedOrigins = [
   'http://localhost:5173',
@@ -32,24 +35,24 @@ const PORT: number = parseInt(process.env.PORT as string, 10);
 const MONGODB_URI: string = process.env.MONGODB_URI as string;
 
 if (!MONGODB_URI) {
-  throw new Error('MONGODB_URI is not defined in environment variables');
+  LoggerUtils.error('MONGODB_URI is not defined in environment variables');
+  process.exit(1);
 }
 
-console.log(`Server will run on port ${PORT}`);
 mongoose.connect(MONGODB_URI)
   .then(() => {
-    console.log('Successfully Connected to MongoDB');
+    LoggerUtils.info('Successfully Connected to MongoDB');
   })
   .catch((error) => {
-    console.error('Error connecting to MongoDB:', error);
+    LoggerUtils.error('Error connecting to MongoDB:', error);
   });
 
 
 const server = app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+  LoggerUtils.info(`Server is running on port ${PORT}`);
 });
 process.on('SIGTERM', async () => {
-  console.log('Shutting down gracefully');
+  LoggerUtils.info('Shutting down gracefully');
   await mongoose.connection.close();
   server.close(() => process.exit(0));
 });
