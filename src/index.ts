@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import postRoutes from './routes/postRoute';
 import authRoutes from './routes/authRoute';
+
 import { LoggerUtils } from './utils/loggerUtils';
 
 dotenv.config();
