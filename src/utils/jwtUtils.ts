@@ -10,12 +10,10 @@ interface JWTPayload {
 }
 
 export class JWTUtils {
-  private static readonly TOKEN_SECRET: string = process.env.JWT_SECRET || 'default_secret';
-  private static ensureTokenSecret(): any {
+  private static readonly TOKEN_SECRET: string = process.env.JWT_SECRET!;
+  private static ensureTokenSecret(): void {
     if (!JWTUtils.TOKEN_SECRET) {
-      return {
-        success: false, message: 'JWT_SECRET is not defined in environment variables',
-      }
+      throw new Error('JWT_SECRET is not defined in environment variables');
     }
   }
   static generateToken(payload: JWTPayload): string {
