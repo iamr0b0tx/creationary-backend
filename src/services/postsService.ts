@@ -12,7 +12,7 @@ export class PostsService {
     }
     const post = new Post(data);
     const savedPost = await post.save();
-
+    
     if (!savedPost) {
       return { 
         success: false,
@@ -41,13 +41,14 @@ export class PostsService {
         message: 'Failed to retrieve post from database'
       };
     }
+
     return {
       success: true,
       message: 'Post retrieved successfully',
       data: post
     };
   }
-
+  
   static async getAllPosts() {
     const posts = await Post.find();
     if (!posts || !Array.isArray(posts)) {

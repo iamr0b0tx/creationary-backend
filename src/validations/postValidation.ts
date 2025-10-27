@@ -17,6 +17,9 @@ export class postValidations {
     if (postData.content.length < 20) {
       return "Content must be at least 20 characters long";
     }
+    if (!postData.author) {
+      return "Author is required";
+    }
 
     return null;
   }
