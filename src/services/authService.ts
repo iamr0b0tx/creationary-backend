@@ -3,21 +3,29 @@ import { User } from '../models/User';
 import { JWTUtils } from '../utils/jwtUtils';
 import { mailTemplate } from '../utils/mailTemplateUtils';
 import { HashUtils } from '../utils/hashUtils';
+import { signUpInput } from '../types/authType';
 
 export class AuthService {
-  static async signup(email: string, password: string) {
-    const existingUser = await User.findOne({ email });
+  static async signup(data: signUpInput) {
+    const existingUser = await User.findOne({ email: data.email });
     if (existingUser) {
       return {
         success: false,
         message: 'User already exists',
       };
     }
-    const hashedPassword = await HashUtils.hashPassword(password);
-    const user = new User({ email, password: hashedPassword });
+    const hashedPassword = await HashUtils.hashPassword(data.password);
+    const { email, firstName, lastName } = data;
+    const userData = { email, password: hashedPassword, firstName, lastName };
+    const user = new User(userData);
     const savedUser = await user.save();
+    if (!savedUser) {
+      return {
+        success: false,
+        message: 'User signup failed',
+      };
+    }
 
-    // create a plain object and remove password
     const userSafe = savedUser.toObject();
     const { password: _, ...userWithoutPassword } = userSafe;
 
