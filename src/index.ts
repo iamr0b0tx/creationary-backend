@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import postRoutes from './routes/postRoute';
 import authRoutes from './routes/authRoute';
+import userRoutes from './routes/userRoute';
 
 import { LoggerUtils } from './utils/loggerUtils';
 
@@ -34,6 +35,7 @@ app.use(
 app.use(express.json());
 app.use('/api/posts', postRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api/users', userRoutes);
 
 const PORT: number = parseInt(process.env.PORT as string, 10);
 const MONGODB_URI: string = process.env.MONGODB_URI as string;
