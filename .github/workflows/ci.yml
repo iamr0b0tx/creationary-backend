@@ -1,0 +1,47 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  NODE_VERSION: '18' # change to desired Node major version (e.g. 20)
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    container:
+      image: node:22
+      options: --user node
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Show Node & npm versions
+        run: node -v && npm -v
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build
+        run: npm run build --if-present
+
+      - name: Run tests
+        run: npm test --if-present
+
+      - name: Start app and run a smoke check
+        env:
+          PORT: 3000
+        run: |
+          # start app in background (adjust start script / port as needed)
+          nohup npm start &>/tmp/app.log &
+          sleep 5
+          # basic smoke check
+          curl -f http://localhost:3000/ || (echo "Smoke test failed"; tail -n +1 /tmp/app.log; exit 1)
