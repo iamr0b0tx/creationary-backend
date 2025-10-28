@@ -3,6 +3,8 @@ import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import postRoutes from './routes/postRoute';
+import authRoutes from './routes/authRoute';
+
 import { LoggerUtils } from './utils/loggerUtils';
 
 dotenv.config();
@@ -13,7 +15,8 @@ LoggerUtils.initialize();
 
 const allowedOrigins = [
   'http://localhost:5173',
-  'https://time-zone-app.vercel.app'
+  'https://time-zone-app.vercel.app',
+  'https://creationary-frontend.vercel.app'
 ];
 
 app.use(
@@ -30,6 +33,7 @@ app.use(
 );
 app.use(express.json());
 app.use('/api/posts', postRoutes);
+app.use('/api/auth', authRoutes);
 
 const PORT: number = parseInt(process.env.PORT as string, 10);
 const MONGODB_URI: string = process.env.MONGODB_URI as string;

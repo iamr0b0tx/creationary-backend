@@ -1,8 +1,9 @@
 import { IPost, Post } from '../models/Post';
 import { postValidations } from '../validations/postValidation';
+import { postResponse } from '../types/post';
 
 export class PostsService {
-  static async createPost(data: IPost) {
+  static async createPost(data: IPost): Promise<postResponse> {
     const validatePostInput = postValidations.validatePostInput(data);
     if (validatePostInput) {
       return {
@@ -12,7 +13,7 @@ export class PostsService {
     }
     const post = new Post(data);
     const savedPost = await post.save();
-
+    
     if (!savedPost) {
       return { 
         success: false,
@@ -26,7 +27,7 @@ export class PostsService {
     };
   }
 
-  static async getSinglePost(id: string) {
+  static async getSinglePost(id: string): Promise<postResponse> {
     const post = await Post.findById(id);
     if (!post) {
       return {
@@ -41,14 +42,15 @@ export class PostsService {
         message: 'Failed to retrieve post from database'
       };
     }
+
     return {
       success: true,
       message: 'Post retrieved successfully',
       data: post
     };
   }
-
-  static async getAllPosts() {
+  
+  static async getAllPosts(): Promise<postResponse> {
     const posts = await Post.find();
     if (!posts || !Array.isArray(posts)) {
       return {
@@ -63,7 +65,7 @@ export class PostsService {
     };
   }
 
-  static async updatePost(id: string, data: Partial<IPost>) {
+  static async updatePost(id: string, data: Partial<IPost>): Promise<postResponse> {
     const updatedPost = await Post.findByIdAndUpdate(id, data, { new: true });
     if (!updatedPost) {
       return {
@@ -85,7 +87,7 @@ export class PostsService {
     };
   }
 
-  static async deletePost(id: string) {
+  static async deletePost(id: string): Promise<postResponse> {
     const deletedPost = await Post.findByIdAndDelete(id);
     if (!deletedPost) {
       return {

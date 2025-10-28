@@ -19,7 +19,11 @@ export class PostController {
   static async createPost(req: Request, res: Response): Promise<void> {
     try {
       const postData = req.body;
-      const result = await PostsService.createPost(postData);
+      const author =  (req as any).user?.id;
+      if (author) {
+        postData.author = author;
+      }
+      const result = await PostsService.createPost({ ...postData, author });
       res.status(result.success ? 201 : 400).json(result);
     } catch (error) {
       LoggerUtils.error('Error creating post', { error });
