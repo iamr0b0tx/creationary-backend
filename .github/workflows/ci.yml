@@ -7,7 +7,7 @@ on:
     branches: [ main ]
 
 env:
-  NODE_VERSION: '18' # change to desired Node major version (e.g. 20)
+  NODE_VERSION: '22'
 
 jobs:
   build-and-test:
