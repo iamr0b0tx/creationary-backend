@@ -3,7 +3,7 @@ import { User } from '../models/User';
 import { JWTUtils } from '../utils/jwtUtils';
 import { mailTemplate } from '../utils/mailTemplateUtils';
 import { HashUtils } from '../utils/hashUtils';
-import { signUpInput } from '../types/authType';
+import { signUpInput } from '../types/auth';
 
 export class AuthService {
   static async signup(data: signUpInput) {

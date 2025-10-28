@@ -15,7 +15,8 @@ LoggerUtils.initialize();
 
 const allowedOrigins = [
   'http://localhost:5173',
-  'https://time-zone-app.vercel.app'
+  'https://time-zone-app.vercel.app',
+  'https://creationary-frontend.vercel.app'
 ];
 
 app.use(
