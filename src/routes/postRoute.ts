@@ -6,11 +6,12 @@ import { authorizeRoles } from "../middleware/roleMiddleware";
 const router =  Router();
 
 
-router.get('/', authMiddleware, authorizeRoles('user'), PostController.getAllPosts);
-router.post('/', PostController.createPost);
+router.get('/', PostController.getAllPosts);
+router.get('/posts/search', PostController.searchPosts);
+router.post('/', authMiddleware, authorizeRoles('user'), PostController.createPost);
 router.get('/:id', PostController.getSinglePost);
-router.put('/:id', PostController.updatePost);
-router.delete('/:id', PostController.deletePost);
+router.put('/:id', authMiddleware, authorizeRoles('user'), PostController.updatePost);
+router.delete('/:id', authMiddleware, authorizeRoles('user'), PostController.deletePost);
 
 
 export default router;

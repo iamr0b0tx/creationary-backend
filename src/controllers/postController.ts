@@ -3,9 +3,10 @@ import { PostsService } from '../services/postsService';
 import { LoggerUtils } from '../utils/loggerUtils';
 
 export class PostController {
-  static async getAllPosts(_: Request, res: Response): Promise<void> {
+  static async getAllPosts(req: Request, res: Response): Promise<void> {
     try {
-      const result = await PostsService.getAllPosts();
+      const { page = 1, limit = 10, search } = req.query;
+      const result = await PostsService.getAllPosts(Number(page), Number(limit), search as string);
       res.status(result.success ? 200 : 404).json(result);
     } catch (error) {
       LoggerUtils.error('Error fetching all posts', { error });
@@ -70,6 +71,28 @@ export class PostController {
       res.status(result.success ? 200 : 404).json(result);
     } catch (error) {
       LoggerUtils.error(`Error deleting post with ID: ${req.params.id}`, { error });
+      res.status(500).json({
+        success: false,
+        message: 'Internal server error',
+      });
+    }
+  }
+
+  static async searchPosts(req: Request, res: Response): Promise<void> {
+    try {
+      const searchQuery = req.query.q as string;
+      if (!searchQuery) {
+        res.status(400).json({
+          success: false,
+          message: 'Search query is required',
+        });
+        return;
+      }
+
+      const result = await PostsService.searchPosts(searchQuery);
+      res.status(result.success ? 200 : 404).json(result);
+    } catch (error) {
+      LoggerUtils.error('Error searching posts', { error });
       res.status(500).json({
         success: false,
         message: 'Internal server error',
