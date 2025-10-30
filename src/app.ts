@@ -1,7 +1,7 @@
 import express from "express";
 import type { Request, Response } from "express";
 import 'dotenv/config';
-import logger from './utils/logger.ts';
+import logger from './utils/logger';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
