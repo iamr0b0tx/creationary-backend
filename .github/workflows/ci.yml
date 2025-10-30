@@ -16,6 +16,9 @@ jobs:
       image: node:22
       options: --user node
     steps:
+      - name: Fix permissions for runner workspace
+        run: sudo chmod -R 777 ${{ github.workspace }} /__w/_temp || true
+
       - name: Checkout repository
         uses: actions/checkout@v4
 
