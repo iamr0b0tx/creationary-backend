@@ -1,12 +1,5 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
-  output   = "../src/generated/prisma"
 }
 
 datasource db {
@@ -14,20 +7,105 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id        Int      @id @default(autoincrement())
-  firstName String
-  lastName  String
-  username  String
-  email     String   @unique
-  password  String
-  role      Role     @default(member)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+enum Role {
+  CREATOR
+  MEMBER
 }
 
-enum Role {
-  member
-  creator
-  admin
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String
+  role      Role
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  creator Creator?
+  member  Member?
+}
+
+model Creator {
+  id            Int            @id @default(autoincrement())
+  userId        Int            @unique
+  bio           String?
+  posts         Post[]
+  members       Member[]
+  subscriptions Subscription[]
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model Member {
+  id     Int @id @default(autoincrement())
+  userId Int @unique
+
+  user          User           @relation(fields: [userId], references: [id])
+  comments      Comment[]
+  likes         Like[]
+  subscriptions Subscription[]
+  purchases     Purchase[]
+  Creator       Creator?       @relation(fields: [creatorId], references: [id])
+  creatorId     Int?
+}
+
+model Post {
+  id        Int     @id @default(autoincrement())
+  title     String
+  content   String
+  isPaid    Boolean @default(false)
+  price     Float?
+  creatorId Int
+
+  creator   Creator    @relation(fields: [creatorId], references: [id])
+  comments  Comment[]
+  likes     Like[]
+  purchases Purchase[] // ✅ Added for relation
+  createdAt DateTime   @default(now())
+}
+
+model Comment {
+  id        Int      @id @default(autoincrement())
+  content   String
+  postId    Int
+  memberId  Int
+  createdAt DateTime @default(now())
+
+  post   Post   @relation(fields: [postId], references: [id])
+  member Member @relation(fields: [memberId], references: [id])
+}
+
+model Like {
+  id        Int      @id @default(autoincrement())
+  postId    Int
+  memberId  Int
+  createdAt DateTime @default(now())
+
+  post   Post   @relation(fields: [postId], references: [id])
+  member Member @relation(fields: [memberId], references: [id])
+}
+
+model Subscription {
+  id        Int      @id @default(autoincrement())
+  memberId  Int
+  creatorId Int
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+
+  member  Member  @relation(fields: [memberId], references: [id])
+  creator Creator @relation(fields: [creatorId], references: [id])
+
+  @@unique([memberId, creatorId])
+}
+
+model Purchase {
+  id        Int      @id @default(autoincrement())
+  memberId  Int
+  postId    Int
+  createdAt DateTime @default(now())
+
+  member Member @relation(fields: [memberId], references: [id])
+  post   Post   @relation(fields: [postId], references: [id])
+
+  @@unique([memberId, postId])
 }
