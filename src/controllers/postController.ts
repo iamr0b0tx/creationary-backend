@@ -38,9 +38,9 @@ export class PostController {
   static async getSinglePost(req: Request, res: Response): Promise<void> {
     try {
       const { id } = req.params;
-      const { limit, page } = req.query;
-      const pageNumber = Math.max(1, Number(page));
-      const pageSize = Math.max(1, Number(limit));
+      const { page, limit } = req.query;
+      const pageNumber = Math.max(1, Number(page ?? 1));
+      const pageSize = Math.max(1, Number(limit ?? 5));
       const result = await PostsService.getSinglePost(id, pageNumber, pageSize);
       res.status(result.success ? 200 : 404).json(result);
     } catch (error) {

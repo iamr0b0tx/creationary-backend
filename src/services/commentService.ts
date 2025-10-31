@@ -38,8 +38,7 @@ export class CommentService {
     const comments = await Comment.find({ post: postId })
       .populate("author", "firstName lastName email")
       .sort({ createdAt: -1 })
-      .skip((pageNumber - 1) * pageSize
-      ).limit(pageSize);
+      .skip((pageNumber - 1) * pageSize).limit(pageSize);
     if (!comments) {
       return {
         success: false,
