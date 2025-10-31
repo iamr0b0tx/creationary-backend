@@ -7,7 +7,7 @@ const router =  Router();
 
 
 router.get('/', PostController.getAllPosts);
-router.get('/posts/search', PostController.searchPosts);
+router.get('/search', PostController.searchPosts);
 router.post('/', authMiddleware, authorizeRoles('user'), PostController.createPost);
 router.get('/:id', PostController.getSinglePost);
 router.put('/:id', authMiddleware, authorizeRoles('user'), PostController.updatePost);
