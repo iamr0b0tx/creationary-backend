@@ -2,6 +2,7 @@ import { IPost, Post } from '../models/Post';
 import { User } from '../models/User';
 import { postValidations } from '../validations/postValidation';
 import { postResponse } from '../types/post';
+import { Comment } from '../models/Comment';
 
 export class PostsService {
   static async createPost(data: IPost): Promise<postResponse> {
@@ -28,26 +29,38 @@ export class PostsService {
     };
   }
 
-  static async getSinglePost(id: string): Promise<postResponse> {
-    const post = await Post.findById(id);
+  static async getSinglePost(id: string, pageNumber = 1, pageSize = 5): Promise<postResponse> {
+    const post = await Post.findById(id).populate("author", "firstName lastName email");
     if (!post) {
       return {
         success: false,
         message: 'Post not found'
       };
     }
-    // Confirm if post is a valid document
-    if (!post._id) {
-      return {
-        success: false,
-        message: 'Failed to retrieve post from database'
-      };
-    }
+
+    const comments = await Comment.find({ post: post._id })
+      .populate("author", "firstName lastName email")
+      .sort({ createdAt: -1 })
+      .skip((pageNumber - 1) * pageSize)
+      .limit(pageSize);
+
+    const totalComments = await Comment.countDocuments({ post: post._id });
 
     return {
       success: true,
-      message: 'Post retrieved successfully',
-      data: post
+      message: "Post retrieved successfully",
+      data: {
+        post,
+        comments: {
+          list: comments,
+          pagination: {
+            totalComments,
+            currentPage: pageNumber,
+            totalPages: Math.ceil(totalComments / pageSize),
+            limit: pageSize,
+          },
+        },
+      },
     };
   }
 

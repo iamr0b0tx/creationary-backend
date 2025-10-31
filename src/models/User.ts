@@ -1,6 +1,6 @@
 import mongoose, { Document } from 'mongoose';
 
-export interface User extends Document {
+export interface IUser extends Document {
   email: string;
   firstName?: string;
   lastName?: string;
@@ -10,7 +10,7 @@ export interface User extends Document {
   Subscription?: mongoose.Types.ObjectId[];
 }
 
-const userSchema = new mongoose.Schema<User>({
+const userSchema = new mongoose.Schema<IUser>({
   email: { type: String, required: true, unique: true },
   firstName: { type: String },
   lastName: { type: String },
@@ -20,4 +20,4 @@ const userSchema = new mongoose.Schema<User>({
   Subscription: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Subscription' }],
 });
 
-export const User = mongoose.model<User>('User', userSchema);
+export const User = mongoose.model<IUser>('User', userSchema);
