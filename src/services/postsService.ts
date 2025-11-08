@@ -29,7 +29,7 @@ export class PostsService {
   }
 
   static async getSinglePost(id: string): Promise<postResponse> {
-    const post = await Post.findById(id);
+    const post = await Post.findById(id).populate("author", "firstName lastName email");
     if (!post) {
       return {
         success: false,
@@ -64,6 +64,7 @@ export class PostsService {
     }
 
     const posts = await Post.find(query)
+      .populate("author", "firstName lastName email")
       .skip((pageNumber - 1) * pageSize)
       .limit(pageSize)
       .sort({ createdAt: -1 });
