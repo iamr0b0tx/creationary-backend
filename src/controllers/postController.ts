@@ -20,7 +20,7 @@ export class PostController {
   static async createPost(req: Request, res: Response): Promise<void> {
     try {
       const postData = req.body;
-      const author =  (req as any).user?.id;
+      const author = (req as any).user?.id;
       if (author) {
         postData.author = author;
       }
@@ -37,8 +37,11 @@ export class PostController {
 
   static async getSinglePost(req: Request, res: Response): Promise<void> {
     try {
-      const postId = req.params.id;
-      const result = await PostsService.getSinglePost(postId);
+      const { id } = req.params;
+      const { page, limit } = req.query;
+      const pageNumber = Math.max(1, Number(page ?? 1));
+      const pageSize = Math.max(1, Number(limit ?? 5));
+      const result = await PostsService.getSinglePost(id, pageNumber, pageSize);
       res.status(result.success ? 200 : 404).json(result);
     } catch (error) {
       LoggerUtils.error(`Error fetching post with ID: ${req.params.id}`, { error });
