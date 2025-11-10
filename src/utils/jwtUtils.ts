@@ -18,7 +18,7 @@ export class JWTUtils {
   }
   static generateToken(payload: JWTPayload): string {
     this.ensureTokenSecret();
-    const token = jwt.sign(payload, this.TOKEN_SECRET, { expiresIn: '24h' });
+    const token = jwt.sign({id: payload}, this.TOKEN_SECRET, { expiresIn: '24h' });
     return token;
   }
 
@@ -34,5 +34,4 @@ export class JWTUtils {
       return { error: "Invalid access token" };
     }
   }
-
 }
