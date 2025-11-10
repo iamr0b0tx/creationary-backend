@@ -4,7 +4,7 @@
   "description": "A creator platform for selling media content by creators to members",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "echo 'No tests to run'",
     "start": "ts-node src/index.ts",
     "dev": "ts-node-dev src/index.ts"
   },
