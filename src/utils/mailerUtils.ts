@@ -1,19 +1,28 @@
 import { EmailClient } from "@azure/communication-email";
+import { LoggerUtils } from "./loggerUtils";
 import dotenv from 'dotenv';
 
 dotenv.config();
 
-const connectionString = process.env.AZURE_COMMUNICATION_CONNECTION_STRING || '';
+const connectionString = process.env.AZURE_COMMUNICATION_CONNECTION_STRING!;
 if (!connectionString) {
-  throw new Error('AZURE_COMMUNICATION_CONNECTION_STRING is not defined in environment variables');
+  LoggerUtils.warn('AZURE_COMMUNICATION_CONNECTION_STRING is not defined in environment variables')
 }
-const senderAddress = process.env.SENDER_EMAIL_ADDRESS || '';
+const senderAddress = process.env.SENDER_EMAIL_ADDRESS!;
 if (!senderAddress) {
-  throw new Error('SENDER_EMAIL_ADDRESS is not defined in environment variables');
+  LoggerUtils.warn('SENDER_EMAIL_ADDRESS is not defined in environment variables')
 }
 
 export class MailerUtils {
+  private static isMailerConfigured(): boolean {
+    return Boolean(connectionString && senderAddress);
+  }
+
   static async sendEmail(to: string, subject: string, html: string) {
+    if (!this.isMailerConfigured()) {
+      LoggerUtils.warn('Skipping email send — mailer not configured.');
+      return;
+    }
     try {
       const client = new EmailClient(connectionString);
 
@@ -49,7 +58,11 @@ export class MailerUtils {
 
 
   static async sendPasswordResetEmail(to: string, subject: string, html: string) {
-try {
+    if (!this.isMailerConfigured()) {
+      LoggerUtils.warn('Skipping email send — mailer not configured.');
+      return;
+    }
+    try {
       const client = new EmailClient(connectionString);
 
       const message = {
