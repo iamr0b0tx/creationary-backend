@@ -43,7 +43,7 @@ export class AuthService {
   static async login(email: string, password: string) {
     const user = await User.findOne({ email });
     if (!user) {
-      return { 
+      return {
         success: false,
         message: 'User not found'
       };
@@ -90,6 +90,7 @@ export class AuthService {
 
   static async resetPassword(token: string, newPassword: string) {
     const decoded: any = JWTUtils.verifyAccessToken(token);
+    console.log(decoded)
     if (decoded.error) {
       return {
         success: false,
@@ -99,7 +100,10 @@ export class AuthService {
 
     const user = await User.findById(decoded.id);
     if (!user) {
-      return { success: false, message: 'User not found' };
+      return {
+        success: false,
+        message: 'User not found'
+      };
     }
 
     user.password = await HashUtils.hashPassword(newPassword);
