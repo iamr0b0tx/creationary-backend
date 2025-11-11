@@ -40,6 +40,11 @@ app.use('/api/users', userRoutes);
 const PORT: number = parseInt(process.env.PORT as string, 10);
 const MONGODB_URI: string = process.env.MONGODB_URI as string;
 
+// For CI/CD health check
+app.get('/', (_, res) => {
+  res.status(200).json({ status: 'ok', message: 'App is running' });
+});
+
 async function startServer() {
   if (!MONGODB_URI) {
     LoggerUtils.warn('MONGODB_URI is not defined. Skipping MongoDB connection...');
