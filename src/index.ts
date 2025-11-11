@@ -40,25 +40,27 @@ app.use('/api/users', userRoutes);
 const PORT: number = parseInt(process.env.PORT as string, 10);
 const MONGODB_URI: string = process.env.MONGODB_URI as string;
 
-if (!MONGODB_URI) {
-  LoggerUtils.error('MONGODB_URI is not defined in environment variables');
-  process.exit(1);
-}
+async function startServer() {
+  if (!MONGODB_URI) {
+    LoggerUtils.warn('MONGODB_URI is not defined. Skipping MongoDB connection...');
+  } else {
+    try {
+      await mongoose.connect(MONGODB_URI);
+      LoggerUtils.info('Successfully connected to MongoDB');
+    } catch (error) {
+      LoggerUtils.error('Error connecting to MongoDB:', error as any);
+    }
+  }
 
-mongoose.connect(MONGODB_URI)
-  .then(() => {
-    LoggerUtils.info('Successfully Connected to MongoDB');
-  })
-  .catch((error) => {
-    LoggerUtils.error('Error connecting to MongoDB:', error);
+  const server = app.listen(PORT, () => {
+    LoggerUtils.info(`Server is running on port ${PORT}`);
   });
 
+  process.on('SIGTERM', async () => {
+    LoggerUtils.info('Shutting down gracefully...');
+    await mongoose.connection.close();
+    server.close(() => process.exit(0));
+  });
+}
 
-const server = app.listen(PORT, () => {
-  LoggerUtils.info(`Server is running on port ${PORT}`);
-});
-process.on('SIGTERM', async () => {
-  LoggerUtils.info('Shutting down gracefully');
-  await mongoose.connection.close();
-  server.close(() => process.exit(0));
-});
+startServer();
