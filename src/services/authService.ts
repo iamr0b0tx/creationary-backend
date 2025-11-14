@@ -53,7 +53,8 @@ export class AuthService {
       return { success: false, message: 'Invalid password' };
     }
 
-    const token = JWTUtils.generateToken({ id: user.id, email: user.email, role: user.role });
+    const token = JWTUtils.generateToken({ id: user.id, email: user.email, role: user.role, firstName: user.firstName, lastName: user.lastName });
+    
     const userSafe = user.toObject();
     const { password: _, ...userWithoutPassword } = userSafe;
     return {

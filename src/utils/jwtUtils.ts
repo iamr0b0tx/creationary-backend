@@ -7,6 +7,8 @@ interface JWTPayload {
   id: string;
   email: string;
   role: string;
+  firstName?: string;
+  lastName?: string;
 }
 
 export class JWTUtils {
@@ -18,7 +20,7 @@ export class JWTUtils {
   }
   static generateToken(payload: JWTPayload): string {
     this.ensureTokenSecret();
-    const token = jwt.sign({id: payload}, this.TOKEN_SECRET, { expiresIn: '24h' });
+    const token = jwt.sign(payload, this.TOKEN_SECRET, { expiresIn: '24h' });
     return token;
   }
 
