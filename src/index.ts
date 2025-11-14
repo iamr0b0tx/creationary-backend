@@ -39,7 +39,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/comments', commentRoutes);
 
-const PORT: number = parseInt(process.env.PORT as string, 10);
+const PORT = Number(process.env.PORT) || 3000;
 const MONGODB_URI: string = process.env.MONGODB_URI as string;
 
 // For CI/CD health check
